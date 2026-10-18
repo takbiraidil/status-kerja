@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Status Pekerjaan – Takbir Aidil</title>
+<style>
+:root{--bg:#f5f8f6;--card:#fff;--text:#14211b;--muted:#5d6f66;--line:#dbe6df;--accent:#0f9d6b;--accent-soft:#e0f4ea;--warn:#b45309;--warn-soft:#fdf0dc;--done:#4b6358;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1511;--card:#17211b;--text:#e8f1ec;--muted:#98aba1;--line:#27362d;--accent:#34d399;--accent-soft:#17352a;--warn:#fbbf24;--warn-soft:#3a2d12;--done:#9bb5a8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1511;--card:#17211b;--text:#e8f1ec;--muted:#98aba1;--line:#27362d;--accent:#34d399;--accent-soft:#17352a;--warn:#fbbf24;--warn-soft:#3a2d12;--done:#9bb5a8;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+header{padding:8px 0 20px}
+.org{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+h1{margin:4px 0 6px;font-size:26px;line-height:1.2}
+.sub{color:var(--muted);font-size:14px;margin:0}
+.notice{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:14px;margin:16px 0 8px}
+h2{font-size:17px;margin:28px 0 10px;display:flex;align-items:center;gap:8px}
+.count{background:var(--accent-soft);color:var(--accent);border-radius:999px;font-size:12px;padding:1px 9px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.title{font-weight:600}
+.tag{font-size:12px;border-radius:999px;padding:2px 10px;background:var(--accent-soft);color:var(--accent);white-space:nowrap;font-weight:600}
+.desc{color:var(--muted);font-size:14px;margin:4px 0 0}
+.meta{font-size:13px;color:var(--muted);margin-top:8px}
+.bar{height:8px;background:var(--line);border-radius:99px;margin-top:10px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.pct{font-size:12px;color:var(--muted);margin-top:4px;text-align:right}
+.queue .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-weight:700;display:grid;place-items:center;font-size:14px}
+.queue .row{display:flex;gap:12px;align-items:flex-start}
+.queue .body{flex:1;min-width:0}
+.done .title{color:var(--done)}
+.empty{color:var(--muted);font-size:14px;padding:6px 2px}
+/* peminta */
+.req{font-size:13px;margin-top:8px}
+.req b{color:var(--accent);font-weight:600}
+footer{margin-top:32px;font-size:12px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="org">UPTD Puskesmas Pangarengan</div>
+<h1>Status Pekerjaan Takbir Aidil</h1>
+<p class="sub">Sarpras · Pengurus Barang Pembantu · MFK · Promkes</p>
+<p class="sub" id="updated"></p>
+<div class="notice">Halaman ini hanya untuk informasi agar rekan kerja tahu apa yang sedang dikerjakan. Permintaan pekerjaan tetap diajukan melalui prosedur yang berlaku di Puskesmas.</div>
+</header>
+
+<h2>Sedang dikerjakan <span class="count" id="c1"></span></h2>
+<div id="doing"></div>
+
+<h2>Antrean berikutnya <span class="count" id="c2"></span></h2>
+<div id="queue" class="queue"></div>
+
+<h2>Selesai baru-baru ini <span class="count" id="c3"></span></h2>
+<div id="done" class="done"></div>
+
+<footer>Diperbarui secara berkala oleh Takbir Aidil</footer>
+</div>
+
+<script>
+// ====== EDIT DATA DI SINI (contoh isian, ganti sesuai kondisi sebenarnya) ======
+// peminta = nama atau sebutan pemberi tugas (misal: Kepala Puskesmas, atau namamu sendiri)
+// jabatan = jabatan peminta (boleh dikosongkan dengan "")
+var UPDATED = "17 Oktober 2026";
+var DOING = [
+  {judul:"Contoh: Perbaikan fasilitas ruang rawat inap", bidang:"Sarpras", peminta:"Kepala Puskesmas", jabatan:"", ket:"Pengerjaan dan dokumentasi sebelum-proses-sesudah.", progres:60, target:"Akhir Oktober 2026"},
+  {judul:"Contoh: Pencocokan data inventaris dengan kondisi fisik", bidang:"Barang", peminta:"Takbir Aidil", jabatan:"Pekerjaan sendiri", ket:"Pemeriksaan barang per ruangan.", progres:35, target:"November 2026"}
+];
+var QUEUE = [
+  {judul:"Contoh: Penyiapan checklist dan dokumen MFK", bidang:"MFK", peminta:"Contoh Nama", jabatan:"Koordinator MFK", ket:"Menunggu pekerjaan berjalan selesai."},
+  {judul:"Contoh: Materi edukasi dan konten media sosial", bidang:"Promkes", peminta:"Takbir Aidil", jabatan:"Pekerjaan sendiri", ket:"Dijadwalkan setelah kegiatan lapangan."}
+];
+var DONE = [
+  {judul:"Contoh: Laporan realisasi perbaikan", bidang:"Sarpras", peminta:"Kepala Puskesmas", jabatan:"", ket:"Selesai September 2026"}
+];
+// ==============================================================================
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function req(x){
+  if(!x.peminta) return '';
+  return '<div class="req">Diminta oleh: <b>'+esc(x.peminta)+'</b>'+(x.jabatan?' · '+esc(x.jabatan):'')+'</div>';
+}
+function card(x,extra){
+  return '<div class="card"><div class="top"><div class="title">'+esc(x.judul)+'</div><span class="tag">'+esc(x.bidang)+'</span></div>'+
+  (x.ket?'<p class="desc">'+esc(x.ket)+'</p>':'')+req(x)+(extra||'')+'</div>';
+}
+document.getElementById("updated").textContent = "Terakhir diperbarui: " + UPDATED;
+document.getElementById("c1").textContent = DOING.length;
+document.getElementById("c2").textContent = QUEUE.length;
+document.getElementById("c3").textContent = DONE.length;
+document.getElementById("doing").innerHTML = DOING.length ? DOING.map(function(x){
+  return card(x,(x.target?'<div class="meta">Target: '+esc(x.target)+'</div>':'')+
+  '<div class="bar"><i style="width:'+x.progres+'%"></i></div><div class="pct">'+x.progres+'%</div>');
+}).join("") : '<div class="empty">Tidak ada pekerjaan aktif saat ini.</div>';
+document.getElementById("queue").innerHTML = QUEUE.length ? QUEUE.map(function(x,i){
+  return '<div class="card"><div class="row"><div class="num">'+(i+1)+'</div><div class="body"><div class="top"><div class="title">'+esc(x.judul)+'</div><span class="tag">'+esc(x.bidang)+'</span></div>'+(x.ket?'<p class="desc">'+esc(x.ket)+'</p>':'')+req(x)+'</div></div></div>';
+}).join("") : '<div class="empty">Antrean kosong.</div>';
+document.getElementById("done").innerHTML = DONE.length ? DONE.map(function(x){return card(x)}).join("") : '<div class="empty">Belum ada.</div>';
+</script>
+</body>
+</html>
